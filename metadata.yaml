@@ -1,7 +1,7 @@
 name: astrbot_plugin_qq_media_timeout
 display_name: QQ 视频发送等待保护
 desc: 为含视频的 OneBot 反向 WebSocket 发送请求延长等待，避免上传未完成时过早超时。
-version: v0.1.1
+version: v0.1.2
 author: Whereis-Alice
 repo: https://github.com/Whereis-Alice/astrbot_plugin_qq_media_timeout
 astrbot_version: ">=4.16,<5"

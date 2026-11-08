@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from copy import copy
 from functools import wraps
 from typing import Any
 
@@ -85,8 +84,10 @@ class QQMediaTimeoutPlugin(Star):
                     elif isinstance(value, str) and not params.get("auto_escape"):
                         has_video = "[CQ:video," in value or "[CQ:video]" in value
                 if has_video and api._timeout_sec < self.video_timeout_sec:
-                    # Connection maps remain shared, while timeout state is local.
-                    selected = copy(api)
+                    # Api.__getattr__ turns copy/pickle hooks into OneBot actions.
+                    # Clone its dictionary directly, keeping connection maps shared.
+                    selected = object.__new__(type(api))
+                    vars(selected).update(vars(api))
                     selected._timeout_sec = self.video_timeout_sec
             return await original(selected, action, **params)
 

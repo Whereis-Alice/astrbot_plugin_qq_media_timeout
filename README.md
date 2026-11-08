@@ -28,7 +28,7 @@ https://github.com/Whereis-Alice/astrbot_plugin_qq_media_timeout
 
 ## 作用与限制
 
-插件在运行时包装 `WebSocketReverseApi.call_action`，为视频请求浅拷贝 API 对象，只调整本次请求的超时。连接表仍共享，普通并发请求不受影响；不改 AstrBot 核心文件或 aiocqhttp 安装文件。
+插件在运行时包装 `WebSocketReverseApi.call_action`，为视频请求复制 API 实例状态，只调整本次请求的超时。复制直接保留实例类型及属性，不调用 `copy.copy()` 或 pickle 协议；aiocqhttp 的动态 action 查找会把复制协议方法误当作接口，导致 `WebSocketReverseApi.call_action() takes 2 positional arguments but 3 were given`，v0.1.2 已修复。连接表仍共享，普通并发请求不受影响；不改 AstrBot 核心文件或 aiocqhttp 安装文件。
 
 此插件只解决等待时间过短。QQ 接入端上传失败、签名失效、图片或视频资源不可下载，需要由接入端或相应媒体插件处理。延长等待不会延长 QQ 资源的保留期限，也不验证资源是否可读。
 
@@ -38,14 +38,15 @@ https://github.com/Whereis-Alice/astrbot_plugin_qq_media_timeout
 
 ## 开发检查
 
-无需安装 AstrBot 即可运行隔离的传输行为测试：
+无需安装 AstrBot；安装实际传输 SDK 后运行测试：
 
 ```bash
+python -m pip install aiocqhttp==1.4.4
 python -m unittest discover -s tests -v
 python -m compileall -q main.py tests
 ```
 
-测试覆盖视频识别、嵌套转发、并发隔离、参数透传、异常透传、超时配置及热重载/卸载。测试使用替身传输，不连接 QQ，也不发送消息。
+测试覆盖视频识别、嵌套转发、并发隔离、参数透传、异常透传、超时配置及热重载/卸载，并使用真实 aiocqhttp 传输与模拟 WebSocket 回执检查视频等待。测试不连接 QQ，也不发送真实消息。
 
 ## 许可
 
